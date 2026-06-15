@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="forum.css">
+</head>
+<body>
+    <body class="h-full">
+  <div id="app">
+   <header>
+    <div class="header-inner">
+     <div>
+      <h1 id="site-title" class="header-title heading-font">📱 SchoolConnect</h1>
+     </div>
+     <div class="header-actions"><input type="text" id="search-input" placeholder="ค้นหากระทู้..."> <button id="btn-new-post"> <i data-lucide="plus-circle" style="width:16px;height:16px;"></i> <span>ตั้งกระทู้</span> </button>
+     </div>
+    </div>
+   </header>
+   <div class="main-layout">
+    <aside class="sidebar-left">
+     <div class="sidebar-left-header heading-font">
+      📌 หมวดหมู่
+     </div>
+     <div class="sidebar-left-content"><button data-cat="all" class="category-sidebar-btn active">🌟 ทั้งหมด</button> <button data-cat="กีฬา" class="category-sidebar-btn">⚽ กีฬาฟุตบอล</button> <button data-cat="วิชาเรียน" class="category-sidebar-btn">🧪 วิชาการ/บทเรียน</button> <button data-cat="ศิลปะ" class="category-sidebar-btn">🎨 ศิลปะ/ดนตรี</button> <button data-cat="เกม" class="category-sidebar-btn">🎮 เกม/E-Sports</button> <button data-cat="อื่นๆ" class="category-sidebar-btn">💬 พูดคุยทั่วไป</button>
+     </div>
+    </aside>
+    <main class="main-content">
+     <div class="category-bar">
+      <div class="category-bar-inner"><button data-cat="all" class="category-card-mobile active">🌟 ทั้งหมด</button> <button data-cat="กีฬา" class="category-card-mobile">⚽ กีฬา</button> <button data-cat="วิชาเรียน" class="category-card-mobile">📚 วิชาเรียน</button> <button data-cat="เกม" class="category-card-mobile">🎮 เกม</button> <button data-cat="ศิลปะ" class="category-card-mobile">🎨 ศิลปะ</button> <button data-cat="ดนตรี" class="category-card-mobile">🎵 ดนตรี</button> <button data-cat="เทคโนโลยี" class="category-card-mobile">💻 เทค</button> <button data-cat="อื่นๆ" class="category-card-mobile">💬 อื่นๆ</button>
+      </div>
+     </div>
+     <section class="posts-section">
+      <h2 class="posts-heading heading-font" id="posts-heading">💬 รายการกระทู้ล่าสุด</h2>
+      <div id="posts-list">
+       <div class="empty-state">
+        ยังไม่มีกระทู้ — ลองตั้งกระทู้ใหม่เลย!
+       </div>
+      </div>
+     </section>
+    </main>
+    <aside class="sidebar-right">
+     <div class="sidebar-right-header heading-font">
+      🔥 แท็กฮิต
+     </div>
+     <div class="sidebar-right-content" id="trending-tags">
+      <div style="font-size:12px;color:#9ca3af;text-align:center;padding:16px 0;">
+       แท็กจะปรากฏที่นี่
+      </div>
+     </div>
+    </aside>
+   </div>
+  </div><!-- Modal -->
+  <div id="modal-overlay">
+   <div class="modal-box">
+    <h3 class="modal-title heading-font">✏️ ตั้งกระทู้ใหม่</h3>
+    <form id="post-form">
+     <div class="form-group"><label for="input-author">ชื่อของคุณ</label> <input id="input-author" type="text" required placeholder="เช่น น้องมิว ม.3/1">
+     </div>
+     <div class="form-group"><label for="input-category">หมวดหมู่</label> <select id="input-category" required> <option value="กีฬา">⚽ กีฬา</option> <option value="วิชาเรียน">📚 วิชาเรียน</option> <option value="เกม">🎮 เกม</option> <option value="ศิลปะ">🎨 ศิลปะ</option> <option value="ดนตรี">🎵 ดนตรี</option> <option value="เทคโนโลยี">💻 เทคโนโลยี</option> <option value="อื่นๆ">💬 อื่นๆ</option> </select>
+     </div>
+     <div class="form-group"><label for="input-title">หัวข้อกระทู้</label> <input id="input-title" type="text" required placeholder="พิมพ์หัวข้อที่นี่...">
+     </div>
+     <div class="form-group"><label for="input-content">เนื้อหา</label> <textarea id="input-content" required placeholder="เล่ารายละเอียดเพิ่มเติม..."></textarea>
+     </div>
+     <div class="form-group"><label for="input-tags">แท็ก (คั่นด้วยคอมม่า)</label> <input id="input-tags" type="text" placeholder="เช่น ฟุตบอล, แข่งขัน">
+     </div>
+     <div class="form-actions"><button type="button" class="btn-cancel" id="btn-cancel">ยกเลิก</button> <button type="submit" class="btn-submit" id="btn-submit-post">โพสต์</button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <script>
+    // State
+    let allPosts = [];
+    let currentCategory = 'all';
+    let likedPosts = JSON.parse(localStorage.getItem('liked_posts') || '{}');
+
+    // Default config
+    const defaultConfig = {
+      site_title: 'SchoolConnect',
+      background_color: '#fffbeb',
+      header_color: '#059669',
+      surface_color: '#ffffff',
+      text_color: '#374151',
+      primary_action_color: '#059669'
+    };
+
+    // Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const title = config.site_title || defaultConfig.site_title;
+          document.getElementById('site-title').textContent = '📱 ' + title;
+          document.getElementById('app').style.background = config.background_color || defaultConfig.background_color;
+          document.querySelector('header').style.background = `linear-gradient(to right, ${config.header_color || defaultConfig.header_color}, ${config.primary_action_color || defaultConfig.primary_action_color})`;
+          document.querySelectorAll('.post-card, .modal-box, .sidebar-left, .sidebar-right, .category-bar').forEach(el => {
+            el.style.background = config.surface_color || defaultConfig.surface_color;
+          });
+          document.querySelectorAll('.post-card-title, .posts-heading, .sidebar-left-header, .sidebar-right-header, .modal-title').forEach(el => {
+            el.style.color = config.text_color || defaultConfig.text_color;
+          });
+          document.querySelectorAll('.btn-submit').forEach(el => {
+            el.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+          });
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.header_color || defaultConfig.header_color, set: (v) => { config.header_color = v; window.elementSdk.setConfig({ header_color: v }); } },
+            { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['site_title', config.site_title || defaultConfig.site_title]
+        ])
+      });
+    }
+
+    // Data SDK
+    const dataHandler = {
+      onDataChanged(data) {
+        allPosts = data;
+        renderPosts();
+        renderTags();
+      }
+    };
+
+    (async () => {
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) console.error('Data SDK init failed');
+      }
+    })();
+
+    // Render
+    function renderPosts() {
+      const container = document.getElementById('posts-list');
+      const search = (document.getElementById('search-input').value || '').toLowerCase();
+      let filtered = allPosts.filter(p => {
+        if (currentCategory !== 'all' && p.category !== currentCategory) return false;
+        if (search && !p.title.toLowerCase().includes(search) && !p.content.toLowerCase().includes(search)) return false;
+        return true;
+      });
+      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">ยังไม่มีกระทู้ — ลองตั้งกระทู้ใหม่เลย!</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(p => {
+        const isLiked = likedPosts[p.__backendId];
+        const timeAgo = getTimeAgo(p.created_at);
+        return `<div class="post-card" data-id="${p.__backendId}">
+          <div class="post-card-header">
+            <span class="post-card-title">${escHtml(p.title)}</span>
+            <span class="post-card-category">${escHtml(p.category)}</span>
+          </div>
+          <div class="post-card-content">${escHtml(p.content)}</div>
+          ${p.tags ? `<div style="margin-bottom:8px;">${p.tags.split(',').map(t => `<span class="tag-pill">#${escHtml(t.trim())}</span>`).join('')}</div>` : ''}
+          <div class="post-card-footer">
+            <span class="post-card-author">โดย ${escHtml(p.author)} · ${timeAgo}</span>
+            <div class="post-card-actions">
+              <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${p.__backendId}" data-likes="${p.likes || 0}">
+                <i data-lucide="heart" style="width:14px;height:14px;"></i> ${p.likes || 0}
+              </button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function renderTags() {
+      const tagCount = {};
+      allPosts.forEach(p => {
+        if (p.tags) p.tags.split(',').forEach(t => {
+          const tag = t.trim();
+          if (tag) tagCount[tag] = (tagCount[tag] || 0) + 1;
+        });
+      });
+      const sorted = Object.entries(tagCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      const container = document.getElementById('trending-tags');
+      if (sorted.length === 0) {
+        container.innerHTML = '<div style="font-size:12px;color:#9ca3af;text-align:center;padding:16px 0;">แท็กจะปรากฏที่นี่</div>';
+        return;
+      }
+      container.innerHTML = sorted.map(([tag, count]) => `<span class="tag-pill">#${escHtml(tag)} (${count})</span>`).join(' ');
+    }
+
+    function getTimeAgo(isoStr) {
+      const diff = Date.now() - new Date(isoStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'เมื่อสักครู่';
+      if (mins < 60) return mins + ' นาทีที่แล้ว';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + ' ชม.ที่แล้ว';
+      return Math.floor(hrs / 24) + ' วันที่แล้ว';
+    }
+
+    function escHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str || '';
+      return d.innerHTML;
+    }
+
+    // Events
+    document.getElementById('btn-new-post').addEventListener('click', () => {
+      document.getElementById('modal-overlay').classList.add('show');
+    });
+    document.getElementById('btn-cancel').addEventListener('click', () => {
+      document.getElementById('modal-overlay').classList.remove('show');
+    });
+    document.getElementById('modal-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modal-overlay')) {
+        document.getElementById('modal-overlay').classList.remove('show');
+      }
+    });
+
+    document.getElementById('post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (allPosts.length >= 999) {
+        showToast('⚠️ จำนวนกระทู้เต็มแล้ว (999)');
+        return;
+      }
+      const btn = document.getElementById('btn-submit-post');
+      btn.disabled = true;
+      btn.textContent = 'กำลังโพสต์...';
+
+      const record = {
+        author: document.getElementById('input-author').value.trim(),
+        category: document.getElementById('input-category').value,
+        title: document.getElementById('input-title').value.trim(),
+        content: document.getElementById('input-content').value.trim(),
+        tags: document.getElementById('input-tags').value.trim(),
+        likes: 0,
+        created_at: new Date().toISOString()
+      };
+
+      const result = await window.dataSdk.create(record);
+      btn.disabled = false;
+      btn.textContent = 'โพสต์';
+
+      if (result.isOk) {
+        document.getElementById('post-form').reset();
+        document.getElementById('modal-overlay').classList.remove('show');
+        showToast('✅ โพสต์สำเร็จ!');
+      } else {
+        showToast('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
+      }
+    });
+
+    // Like
+    document.getElementById('posts-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('.like-btn');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const post = allPosts.find(p => p.__backendId === id);
+      if (!post) return;
+
+      if (likedPosts[id]) {
+        post.likes = Math.max(0, (post.likes || 0) - 1);
+        delete likedPosts[id];
+      } else {
+        post.likes = (post.likes || 0) + 1;
+        likedPosts[id] = true;
+      }
+      localStorage.setItem('liked_posts', JSON.stringify(likedPosts));
+      await window.dataSdk.update(post);
+      renderPosts();
+    });
+
+    // Category filters
+    document.querySelectorAll('.category-sidebar-btn, .category-card-mobile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentCategory = btn.dataset.cat;
+        document.querySelectorAll('.category-sidebar-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.category-card-mobile').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll(`[data-cat="${currentCategory}"]`).forEach(b => b.classList.add('active'));
+        renderPosts();
+      });
+    });
+
+    // Search
+    document.getElementById('search-input').addEventListener('input', () => renderPosts());
+
+    // Toast
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+
+    // Init icons
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c3b1ddf4fc5937',t:'MTc4MTU0ODczOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+</body>
+</html>
