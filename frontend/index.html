@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SchoolConnect - เข้าสู่ระบบ</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-container">
+        <div class="login-header">
+          <h1 class="site-title heading-font">📱 SchoolConnect</h1>
+          <p class="subtitle">ยินดีต้อนรับสู่สังคมออนไลน์ของโรงเรียน</p>
+        </div>
+
+        <form class="login-form" id="login-form">
+          <div class="form-group">
+            <label for="input-username" class="form-label">ชื่อผู้ใช้งาน</label>
+            <input
+              id="input-username"
+              type="text"
+              name="username"
+              class="form-input"
+              required
+              placeholder="พิมพ์ชื่อผู้ใช้งานที่นี่..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="input-password" class="form-label">รหัสผ่าน</label>
+            <input
+              id="input-password"
+              type="password"
+              name="password"
+              class="form-input"
+              required
+              placeholder="พิมพ์รหัสผ่านที่นี่..."
+            />
+          </div>
+
+          <button type="submit" class="btn-submit">เข้าสู่ระบบ</button>
+        </form>
+
+        <div class="register-link-container">
+          <p>
+            ยังไม่มีบัญชี?
+            <a href="register.html" class="register-link">สมัครสมาชิกที่นี่</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="login.js"></script>
+  </body>
+</html>
