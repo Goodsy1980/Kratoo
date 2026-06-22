@@ -42,6 +42,23 @@ app.post("/api/auth/register", async (req, res) => {
     const userExists = await User.findOne({ username });
     if (userExists) {
       return res.status(400).json({ message: "ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว" });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     // 🔐 เข้ารหัสผ่าน (Hashing) ก่อนเซฟลงฐานข้อมูลเพื่อความปลอดภัย
@@ -73,6 +90,7 @@ app.post("/api/auth/login", async (req, res) => {
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(400).json({ message: "ไม่พบชื่อผู้ใช้งานนี้ในระบบ" });
+
     }
 
     // 2. ตรวจสอบรหัสผ่านที่ผู้ใช้พิมพ์มา เทียบกับรหัสที่เข้ารหัสไว้ในฐานข้อมูล
