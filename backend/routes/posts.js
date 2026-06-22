@@ -46,7 +46,8 @@ router.post('/', auth, async (req, res) => {
 });
 
 
-// 💥 API สำหรับ กดไลค์ / ถอนไลค์ (Toggle Like)
+
+    // 💥 API สำหรับ กดไลค์ / ถอนไลค์ (Toggle Like)
 router.post('/:id/like', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
@@ -72,7 +73,8 @@ router.post('/:id/like', auth, async (req, res) => {
 
 
 
-const User = require('../models/User'); // 💡 อย่าลืมเช็กว่ามีบรรทัดนำเข้าโมเดล User หรือยัง (ถ้ามีแล้วไม่ต้องใส่ซ้ำ)
+
+    const User = require('../models/User'); // 💡 อย่าลืมเช็กว่ามีบรรทัดนำเข้าโมเดล User หรือยัง (ถ้ามีแล้วไม่ต้องใส่ซ้ำ)
 
 // 💬 API สำหรับส่งคอมเมนต์ใต้โพสต์
 router.post('/:id/comment', auth, async (req, res) => {
@@ -97,8 +99,6 @@ router.post('/:id/comment', auth, async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
-
 
 
 module.exports = router;

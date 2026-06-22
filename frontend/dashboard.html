@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchoolConnect - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F7F7F7] text-[#1E1E1E]">
+
+    <nav class="bg-[#1E1E1E] text-white px-6 py-4 flex justify-between items-center border-b-4 border-[#FFDE4D] sticky top-0 z-40">
+        <div class="flex items-center gap-2">
+            <span class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-3 py-1 rounded-lg text-lg">🏫</span>
+            <span class="font-bold text-xl tracking-wide text-[#FFDE4D]">SchoolConnect</span>
+        </div>
+        
+        <div class="w-1/3">
+            <input type="text" placeholder="🔍 ค้นหากระทู้..." class="w-full bg-[#2A2A2A] text-white px-4 py-2 rounded-xl border-2 border-transparent focus:border-[#FFDE4D] focus:outline-none transition">
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button id="openModalBtn" class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-4 py-2 rounded-xl hover:scale-105 transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-pointer">
+                + ตั้งกระทู้
+            </button>
+            <div class="flex items-center gap-2 bg-[#2A2A2A] px-3 py-1.5 rounded-xl border border-gray-700">
+                <span class="text-sm text-gray-300">👦 โปรไฟล์นักเรียน</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-12 gap-6 p-6">
+        
+        <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
+            <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">🗂️ หมวดหมู่</h3>
+            <ul class="space-y-2">
+                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">⚽ กีฬาฟุตบอล</a></li>
+                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">📚 วิชาการ/บทเรียน</a></li>
+                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">🎨 ศิลปะ/ดนตรี</a></li>
+                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">🎮 เกม/E-Sports</a></li>
+                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">💬 พูดคุยทั่วไป</a></li>
+            </ul>
+        </aside>
+
+        <main class="col-span-6 space-y-4">
+            <h3 class="font-bold text-xl mb-2 text-[#1E1E1E]">🔥 รายการกระทู้ล่าสุด</h3>
+            
+            <div class="bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E]">
+                <p class="text-gray-500 text-sm">กำลังโหลดข้อมูลกระทู้จากระบบ...</p>
+            </div>
+        </main>
+
+        <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
+            <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">✨ แท็กฮิต</h3>
+            <div class="flex flex-wrap gap-2">
+                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#การบ้านฟิสิกส์</a>
+                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#แข่งบอลสี</a>
+                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#แนะแนวต่อมหาลัย</a>
+            </div>
+        </aside>
+
+    </div>
+
+    <div id="postModal" class="hidden fixed inset-0 bg-[#1E1E1E]/60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-lg p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E]">
+            <h3 class="font-bold text-xl mb-4 text-[#1E1E1E] border-b-2 border-[#FFDE4D] pb-2">✏️ ตั้งกระทู้ใหม่</h3>
+            
+            <form id="postForm" class="space-y-4">
+                <div>
+                    <label class="block font-bold text-sm mb-1">หัวข้อกระทู้ *</label>
+                    <input type="text" id="postTitle" required placeholder="เช่น หาคนเตะบอลเย็นนี้ครับ" class="w-full p-2.5 rounded-xl border-2 border-[#1E1E1E] focus:outline-none focus:bg-[#FFDE4D]/10">
+                </div>
+                <div>
+                    <label class="block font-bold text-sm mb-1">หมวดหมู่ *</label>
+                    <select id="postCategory" class="w-full p-2.5 rounded-xl border-2 border-[#1E1E1E] focus:outline-none bg-white">
+                        <option value="⚽ กีฬาฟุตบอล">⚽ กีฬาฟุตบอล</option>
+                        <option value="📚 วิชาการ/บทเรียน">📚 วิชาการ/บทเรียน</option>
+                        <option value="🎨 ศิลปะ/ดนตรี">🎨 ศิลปะ/ดนตรี</option>
+                        <option value="🎮 เกม/E-Sports">🎮 เกม/E-Sports</option>
+                        <option value="💬 พูดคุยทั่วไป">💬 พูดคุยทั่วไป</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-sm mb-1">เนื้อหารายละเอียด</label>
+                    <textarea id="postContent" rows="4" placeholder="พิมพ์รายละเอียดเพิ่มเติมตรงนี้เลยเพื่อน..." class="w-full p-2.5 rounded-xl border-2 border-[#1E1E1E] focus:outline-none focus:bg-[#FFDE4D]/10"></textarea>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="isAnonymous" class="w-4 h-4 accent-[#1E1E1E]">
+                    <label for="isAnonymous" class="text-sm font-medium select-none cursor-pointer">โพสต์แบบไม่แสดงตัวตน (Anonymous)</label>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-200 rounded-xl font-bold border-2 border-[#1E1E1E] hover:bg-gray-300 cursor-pointer">ยกเลิก</button>
+                    <button type="submit" class="px-4 py-2 bg-[#FFDE4D] text-[#1E1E1E] font-bold rounded-xl border-2 border-[#1E1E1E] shadow-[2px_2px_0px_0px_#1E1E1E] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#1E1E1E] cursor-pointer">ลงประกาศ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // 🕐 ฟังก์ชันช่วยแปลงเวลาเป็น "กี่นาที/ชั่วโมงที่แล้ว"
+    function formatTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+
+        if (diffInSeconds < 60) return 'เมื่อกี้';
+        
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        if (diffInMinutes < 60) return `${diffInMinutes} นาทีที่แล้ว`;
+        
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) return `${diffInHours} ชั่วโมงที่แล้ว`;
+        
+        return date.toLocaleDateString("th-TH"); 
+    }
+
+    const API_URL = 'http://localhost:5000/api/posts'; 
+
+    // ดึง Elements มารอไว้
+    const postModal = document.getElementById('postModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const postForm = document.getElementById('postForm');
+
+    // สั่งเปิด - ปิดกล่องโต้ตอบตั้งกระทู้
+    if(openModalBtn) openModalBtn.addEventListener('click', () => postModal.classList.remove('hidden'));
+    if(closeModalBtn) closeModalBtn.addEventListener('click', () => postModal.classList.add('hidden'));
+
+    // 🔄 ฟังก์ชัน: ดึงกระทู้จริงจากหลังบ้านมาวาดลงบนจอ (รวมระบบ Like & Comment)
+    async function loadPosts() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('เรียกข้อมูลจาก API ไม่สำเร็จ');
+            
+            const posts = await response.json();
+            const feedContainer = document.querySelector('main');
+            
+            feedContainer.innerHTML = '<h3 class="font-bold text-xl mb-2 text-[#1E1E1E]">🔥 รายการกระทู้ล่าสุด</h3>'; 
+
+            if(posts.length === 0) {
+                feedContainer.insertAdjacentHTML('beforeend', '<p class="text-gray-500 text-sm p-4 text-center">ยังไม่มีใครตั้งกระทู้เลย มาเป็นคนแรกกันเพื่อน!</p>');
+                return;
+            }
+
+            posts.forEach(post => {
+                const timeAgo = formatTimeAgo(post.createdAt); 
+
+                // ปรับเงื่อนไขการแสดงชื่อคนโพสต์ให้สอดคล้องกับฐานข้อมูลหลังบ้าน
+                const authorDisplay = post.isAnonymous 
+                    ? 'ไม่ระบุตัวตน (Anonymous)' 
+                    : (post.userId ? post.userId.username : 'สมาชิกทั่วไป');
+
+                // 💬 วนลูปเตรียมข้อความคอมเมนต์ทั้งหมดที่มีใต้โพสต์นี้ (รองรับโพสต์เก่าที่ไม่มีคอมเมนต์ด้วย)
+                let commentsHTML = '';
+                if (post.comments && post.comments.length > 0) {
+                    post.comments.forEach(comment => {
+                        commentsHTML += `
+                            <div class="bg-gray-50 p-2 rounded-xl mb-1.5 border border-gray-100 text-xs">
+                                <div class="flex justify-between text-[10px] text-gray-400">
+                                    <span class="font-bold text-gray-600">👤 ${comment.username || 'สมาชิกทั่วไป'}</span>
+                                    <span>${formatTimeAgo(comment.createdAt)}</span>
+                                </div>
+                                <p class="text-gray-700 mt-0.5">${comment.text}</p>
+                            </div>
+                        `;
+                    });
+                }
+
+                // 🎴 วาดโครงสร้างการ์ดกระทู้ใหม่แบบคลีน ๆ
+                const postHTML = `
+                    <div class="bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#1E1E1E] mb-4">
+                        <span class="bg-[#FFDE4D] text-[#1E1E1E] text-xs font-bold px-2.5 py-1 rounded-full">${post.category}</span>
+                        <h4 class="font-bold text-lg mt-2 text-[#1E1E1E]">${post.title}</h4>
+                        <p class="text-sm text-gray-600 mt-1">${post.content || ''}</p>
+                        
+                        <div class="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-500">
+                            <div>👤 โดย: <span class="font-semibold text-gray-700">${authorDisplay}</span></div>
+                            
+                            <button onclick="likePost('${post._id}')" class="flex items-center gap-1 hover:text-yellow-500 font-medium transition-colors cursor-pointer">
+                                👍 <span>${post.likes ? post.likes.length : 0} ถูกใจ</span>
+                            </button>
+                            
+                            <div>💬 ${post.comments ? post.comments.length : 0} คอมเมนต์</div>
+                            <div class="ml-auto">🕒 ${timeAgo}</div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-gray-200">
+                            <div class="max-h-40 overflow-y-auto mb-3">
+                                ${commentsHTML || '<p class="text-[11px] text-gray-400 text-center py-1">ยังไม่มีคอมเมนต์ มาประเดิมคนแรกกันเพื่อน!</p>'}
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <input type="text" id="input-comment-${post._id}" placeholder="เขียนความคิดเห็นของคุณที่นี่..." class="w-full text-xs p-2 border-2 border-[#1E1E1E] rounded-xl focus:outline-none bg-gray-50">
+                                <button onclick="addComment('${post._id}')" class="bg-[#1E1E1E] text-white text-xs px-4 py-2 rounded-xl font-bold hover:bg-gray-800 transition-colors cursor-pointer">ส่ง</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                feedContainer.innerHTML += postHTML;
+            });
+        } catch (error) {
+            console.error('โหลดกระทู้ล้มเหลว:', error);
+        }
+    }
+
+    // 👍 ฟังก์ชันสำหรับส่งคำสั่งกดไลค์ไปหลังบ้าน
+    async function likePost(postId) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('ต้องเข้าสู่ระบบก่อนถึงจะกดไลค์ได้นะเพื่อน!');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                loadPosts(); // กดเสร็จสั่งดึงโพสต์ใหม่ทันทีเพื่ออัปเดตตัวเลขบนหน้าจอ
+            } else {
+                const errorData = await response.json();
+                console.error('การกดไลค์มีปัญหา:', errorData.message);
+            }
+        } catch (error) {
+            console.error('เชื่อมต่อระบบไลค์ล้มเหลว:', error);
+        }
+    }
+
+    // 💬 ฟังก์ชันสำหรับส่งคอมเมนต์ใหม่ไปหลังบ้าน
+    async function addComment(postId) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('ต้องเข้าสู่ระบบก่อนถึงจะคอมเมนต์ได้นะเพื่อน!');
+            return;
+        }
+
+        const commentInput = document.getElementById(`input-comment-${postId}`);
+        const text = commentInput.value.trim();
+
+        if (!text) {
+            alert('กรุณาพิมพ์ข้อความคอมเมนต์ก่อนส่งนะเพื่อน!');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ text })
+            });
+
+            if (response.ok) {
+                commentInput.value = ''; // ล้างช่องพิมพ์หลังส่งสำเร็จ
+                loadPosts(); // รีโหลดฟีดกระทู้เพื่ออัปเดตคอมเมนต์ล่าสุดทันที
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || 'คอมเมนต์ไม่สำเร็จ');
+            }
+        } catch (error) {
+            console.error('เชื่อมต่อระบบคอมเมนต์ล้มเหลว:', error);
+        }
+    }
+
+    // 📝 ฟังก์ชัน: ส่งข้อมูลกระทู้ใหม่ไปบันทึกหลังบ้าน
+    if(postForm) {
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const category = document.getElementById('postCategory').value;
+            const isAnonymous = document.getElementById('isAnonymous').checked;
+
+            const token = localStorage.getItem('token'); 
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title,
+                        content,
+                        category,
+                        isAnonymous
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('โพสต์สำเร็จแล้วเพื่อน!');
+                    postForm.reset(); 
+                    postModal.classList.add('hidden'); 
+                    loadPosts(); 
+                } else {
+                    alert(result.message || 'เกิดข้อผิดพลาดในการโพสต์');
+                }
+            } catch (error) {
+                alert('ไม่สามารถเชื่อมต่อหลังบ้านได้ ตรวจสอบว่าเปิดเซิร์ฟเวอร์หลังบ้านหรือยัง');
+            }
+        });
+    }
+
+    // โหลดข้อมูลกระทู้ทันทีที่เปิดหน้าเว็บ
+    document.addEventListener('DOMContentLoaded', loadPosts);
+</script>
+</body>
+</html>
