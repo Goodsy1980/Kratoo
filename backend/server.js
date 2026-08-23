@@ -118,6 +118,8 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
+app.use('/api/notifications', require('./routes/notifications'));
+
 // 🏃 สั่งให้เซิร์ฟเวอร์รัน
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

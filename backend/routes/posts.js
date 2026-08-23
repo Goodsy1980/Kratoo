@@ -1,104 +1,166 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Post = require('../models/Post');
-const jwt = require('jsonwebtoken'); // 1. นำเข้า jwt เพิ่มที่หัวแถว
+const mongoose = require("mongoose");
+const Post = require("../models/Post");
+const User = require("../models/User"); // ดึงมาไว้ข้างบนให้เป็นระเบียบ
+const Notification = require("../models/Notification"); // 🔔 เพิ่มโมเดลแจ้งเตือนตรงนี้!
+const jwt = require("jsonwebtoken");
 
-// 2. สร้างฟังก์ชัน (Middleware) ตรวจสอบ Token ชั่วคราวในไฟล์นี้
+// Middleware ตรวจสอบ Token
 const auth = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) return res.status(401).json({ message: 'ไม่มี Token, กรุณาเข้าสู่ระบบก่อน' });
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if (!token)
+    return res
+      .status(401)
+      .json({ message: "ไม่มี Token, กรุณาเข้าสู่ระบบก่อน" });
 
-    try {
-        // 💡 หมายเหตุ: 'SECRET_KEY' ให้เปลี่ยนให้ตรงกับตัวที่นายใช้ในตอนล็อกอิน (Login) นะครับ
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY'); 
-        req.user = decoded; // เก็บข้อมูลผู้ใช้ที่ถอดรหัสได้ (เช่น id) ไว้ใน req.user
-        next();
-    } catch (err) {
-        res.status(401).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุ' });
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "SECRET_KEY");
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Token ไม่ถูกต้องหรือหมดอายุ" });
+  }
 };
 
-// 3. ตอนดึงโพสต์ (GET): สั่งให้ดึงชื่อผู้ใช้ (username) มาด้วย
-router.get('/', async (req, res) => {
-    try {
-        // ใช้ .populate('userId', 'username') เพื่อดึงชื่อแทนที่จะได้แค่ไอดีเปล่า ๆ
-        const posts = await Post.find().populate('userId', 'username').sort({ createdAt: -1 });
-        res.json(posts);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+// ดึงโพสต์ (GET)
+router.get("/", async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("userId", "username")
+      .sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
-// 4. ตอนสร้างโพสต์ (POST): ใส่คำว่า auth แทรกกลาง เพื่อล็อกให้ต้องล็อกอินก่อนโพสต์
-router.post('/', auth, async (req, res) => {
-    try {
-        const newPost = new Post({
-            title: req.body.title,
-            content: req.body.content,
-            category: req.body.category,
-            userId: req.user.id // ✨ เอา ID ของคนที่ล็อกอินอยู่บันทึกลงฐานข้อมูล
+// สร้างโพสต์ (POST)
+router.post("/", auth, async (req, res) => {
+  try {
+    const newPost = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      category: req.body.category,
+      userId: req.user.id,
+    });
+    const savedPost = await newPost.save();
+    res.status(201).json(savedPost);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// 💥 API สำหรับ กดไลค์ / ถอนไลค์ (Toggle Like)
+router.post("/:id/like", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: "ไม่พบกระทู้นี้" });
+
+    const index = post.likes.indexOf(req.user.id);
+
+    if (index === -1) {
+      // ถ้ายยังไม่เคยไลค์ -> เพิ่มไลค์
+      post.likes.push(req.user.id);
+
+      // 🔔 แจ้งเตือน: มีคนมากดไลค์
+      if (post.userId && post.userId.toString() !== req.user.id) {
+        await Notification.create({
+          recipient: post.userId,
+          sender: req.user.id,
+          type: "like", // ระบุ type ให้ตรงกับ Schema
+          post: post._id,
+          message: `ได้ถูกใจกระทู้ของคุณ`,
         });
-        const savedPost = await newPost.save();
-        res.status(201).json(savedPost);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+      }
+    } else {
+      // ถ้าเคยไลค์แล้ว -> ถอนไลค์
+      post.likes.splice(index, 1);
     }
+
+    await post.save();
+    res.json({ message: "อัปเดตไลค์สำเร็จ", likesCount: post.likes.length });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
-
-
-
-    // 💥 API สำหรับ กดไลค์ / ถอนไลค์ (Toggle Like)
-router.post('/:id/like', auth, async (req, res) => {
-    try {
-        const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: 'ไม่พบกระทู้นี้' });
-
-        // ตรวจสอบว่า User คนนี้เคยมากดไลค์ไปหรือยัง
-        const index = post.likes.indexOf(req.user.id);
-        
-        if (index === -1) {
-            // ถ้ายยังไม่เคยไลค์ -> ให้เพิ่ม ID ยูสเซอร์เข้าไป (กดไลค์)
-            post.likes.push(req.user.id);
-        } else {
-            // ถ้าเคยไลค์แล้ว -> ให้เอา ID ออกจากอาร์เรย์ (ถอนไลค์)
-            post.likes.splice(index, 1);
-        }
-
-        await post.save();
-        res.json({ message: 'อัปเดตไลค์สำเร็จ', likesCount: post.likes.length });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-
-
-
-    const User = require('../models/User'); // 💡 อย่าลืมเช็กว่ามีบรรทัดนำเข้าโมเดล User หรือยัง (ถ้ามีแล้วไม่ต้องใส่ซ้ำ)
 
 // 💬 API สำหรับส่งคอมเมนต์ใต้โพสต์
-router.post('/:id/comment', auth, async (req, res) => {
-    try {
-        const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: 'ไม่พบกระทู้นี้' });
+router.post("/:id/comment", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: "ไม่พบกระทู้นี้" });
 
-        // ไปดึงชื่อผู้ใช้ปัจจุบันจากฐานข้อมูลมาใช้บันทึกในคอมเมนต์
-        const user = await User.findById(req.user.id);
-        
-        const newComment = {
-            userId: req.user.id,
-            username: user ? user.username : 'สมาชิกทั่วไป',
-            text: req.body.text // ข้อความคอมเมนต์ที่ส่งมาจากหน้าบ้าน
-        };
+    const user = await User.findById(req.user.id);
 
-        post.comments.push(newComment); // ยัดคอมเมนต์ใหม่ลงอาร์เรย์
-        await post.save(); // บันทึกลงฐานข้อมูล
+    const newComment = {
+      userId: req.user.id,
+      username: user ? user.username : "สมาชิกทั่วไป",
+      text: req.body.text,
+    };
 
-        res.json({ message: 'เพิ่มคอมเมนต์สำเร็จ', comments: post.comments });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+    post.comments.push(newComment);
+    await post.save();
+
+    // 🔔 แจ้งเตือน: มีคนมาคอมเมนต์
+    if (post.userId && post.userId.toString() !== req.user.id) {
+      await Notification.create({
+        recipient: post.userId,
+        sender: req.user.id,
+        type: "comment",
+        post: post._id,
+        message: `ได้แสดงความคิดเห็นในกระทู้ของคุณ`,
+      });
     }
+
+    res.json({ message: "เพิ่มคอมเมนต์สำเร็จ", comments: post.comments });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
+// 🔥 API สำหรับ ตอบกลับคอมเมนต์ย่อย (Reply)
+router.post("/:postId/comments/:commentId/replies", auth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text)
+      return res.status(400).json({ message: "กรุณากรอกข้อความตอบกลับ" });
+
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: "ไม่พบกระทู้นี้" });
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "ไม่พบคอมเมนต์นี้" });
+
+    const userId = req.user.id || req.user._id || req.user;
+    const user = await User.findById(userId);
+
+    const newReply = {
+      text,
+      userId: userId,
+      username: user ? user.username : "สมาชิกทั่วไป",
+      createdAt: new Date(),
+    };
+
+    comment.replies.push(newReply);
+    await post.save();
+
+    // 🔔 แจ้งเตือน: มีคนมาตอบกลับคอมเมนต์
+    // เปลี่ยนมาแจ้งเตือน "เจ้าของคอมเมนต์" แทนที่จะเป็นเจ้าของโพสต์
+    if (comment.userId && comment.userId.toString() !== userId.toString()) {
+      await Notification.create({
+        recipient: comment.userId,
+        sender: userId,
+        type: "reply",
+        post: post._id,
+        message: `ได้ตอบกลับความคิดเห็นของคุณ`,
+      });
+    }
+
+    res.status(201).json(post);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 module.exports = router;
