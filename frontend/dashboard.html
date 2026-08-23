@@ -13,6 +13,7 @@
 <body class="bg-[#F7F7F7] text-[#1E1E1E]">
 
     <nav class="bg-[#1E1E1E] text-white px-6 py-4 flex justify-between items-center border-b-4 border-[#FFDE4D] sticky top-0 z-40">
+ 
         <div class="flex items-center gap-2">
             <span class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-3 py-1 rounded-lg text-lg">🏫</span>
             <span class="font-bold text-xl tracking-wide text-[#FFDE4D]">SchoolConnect</span>
@@ -22,11 +23,31 @@
             <input type="text" placeholder="🔍 ค้นหากระทู้..." class="w-full bg-[#2A2A2A] text-white px-4 py-2 rounded-xl border-2 border-transparent focus:border-[#FFDE4D] focus:outline-none transition">
         </div>
 
+        <!-- 🛠️ โซนเมนูฝั่งขวา (ใส่กระดิ่งไว้ที่นี่) -->
         <div class="flex items-center gap-4">
+            
+            <!-- 🔔 กระดิ่งแจ้งเตือน -->
+            <div class="relative inline-block">
+                <button onclick="toggleNotiMenu()" class="relative p-2 text-xl hover:scale-110 transition-transform cursor-pointer">
+                    🔔 <span id="noti-badge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-black">0</span>
+                </button>
+
+                <!-- Dropdown แจ้งเตือน -->
+                <div id="noti-dropdown" class="hidden absolute right-0 top-full mt-3 w-72 bg-white rounded-xl shadow-lg border border-gray-200 z-50 p-2 text-black">
+                    <div class="flex justify-between items-center px-2 py-1 border-b text-xs font-bold text-gray-800">
+                        <span>การแจ้งเตือน</span>
+                        <button onclick="markAllNotiRead()" class="text-blue-500 hover:underline text-[10px]">อ่านทั้งหมด</button>
+                    </div>
+                    <div id="noti-list" class="max-h-60 overflow-y-auto mt-1 text-xs">
+                        <p class="text-gray-400 text-center py-4">ไม่มีการแจ้งเตือน</p>
+                    </div>
+                </div>
+            </div>
+
             <button id="openModalBtn" class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-4 py-2 rounded-xl hover:scale-105 transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-pointer">
                 + ตั้งกระทู้
             </button>
-            <div class="flex items-center gap-2 bg-[#2A2A2A] px-3 py-1.5 rounded-xl border border-gray-700">
+            <div class="flex items-center gap-2 bg-[#2A2A2A] px-3 py-1.5 rounded-xl border border-gray-700 cursor-pointer">
                 <span class="text-sm text-gray-300">👦 โปรไฟล์นักเรียน</span>
             </div>
         </div>
@@ -34,14 +55,16 @@
 
     <div class="max-w-7xl mx-auto grid grid-cols-12 gap-6 p-6">
         
+        <!-- 🗂️ แถบหมวดหมู่ (เปลี่ยนเป็นปุ่มกดเรียกฟังก์ชันกรอง) -->
         <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
             <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">🗂️ หมวดหมู่</h3>
             <ul class="space-y-2">
-                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">⚽ กีฬาฟุตบอล</a></li>
-                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">📚 วิชาการ/บทเรียน</a></li>
-                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">🎨 ศิลปะ/ดนตรี</a></li>
-                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">🎮 เกม/E-Sports</a></li>
-                <li><a href="#" class="block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition">💬 พูดคุยทั่วไป</a></li>
+                <li><button onclick="loadPosts('all')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">🌟 ดูทั้งหมด</button></li>
+                <li><button onclick="loadPosts('⚽ กีฬาฟุตบอล')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">⚽ กีฬาฟุตบอล</button></li>
+                <li><button onclick="loadPosts('📚 วิชาการ/บทเรียน')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">📚 วิชาการ/บทเรียน</button></li>
+                <li><button onclick="loadPosts('🎨 ศิลปะ/ดนตรี')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">🎨 ศิลปะ/ดนตรี</button></li>
+                <li><button onclick="loadPosts('🎮 เกม/E-Sports')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">🎮 เกม/E-Sports</button></li>
+                <li><button onclick="loadPosts('💬 พูดคุยทั่วไป')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">💬 พูดคุยทั่วไป</button></li>
             </ul>
         </aside>
 
@@ -130,34 +153,55 @@
     if(openModalBtn) openModalBtn.addEventListener('click', () => postModal.classList.remove('hidden'));
     if(closeModalBtn) closeModalBtn.addEventListener('click', () => postModal.classList.add('hidden'));
 
-    // 🔄 ฟังก์ชัน: ดึงกระทู้จริงจากหลังบ้านมาวาดลงบนจอ (รวมระบบ Like & Comment)
-    async function loadPosts() {
+    // 🔄 ฟังก์ชัน: ดึงกระทู้จริงจากหลังบ้านมาวาดลงบนจอ (รองรับการกรองหมวดหมู่)
+    async function loadPosts(filterCategory = 'all') {
         try {
             const response = await fetch(API_URL);
             if (!response.ok) throw new Error('เรียกข้อมูลจาก API ไม่สำเร็จ');
             
-            const posts = await response.json();
+            let posts = await response.json();
             const feedContainer = document.querySelector('main');
             
-            feedContainer.innerHTML = '<h3 class="font-bold text-xl mb-2 text-[#1E1E1E]">🔥 รายการกระทู้ล่าสุด</h3>'; 
+            // กรองหมวดหมู่ตามที่กดเลือก
+            if (filterCategory !== 'all') {
+                posts = posts.filter(post => post.category === filterCategory);
+            }
+
+            // เปลี่ยนหัวข้อตามหมวดหมู่ที่กำลังดู
+            const titleText = filterCategory === 'all' ? '🔥 รายการกระทู้ล่าสุด' : `📁 หมวดหมู่: ${filterCategory}`;
+            feedContainer.innerHTML = `<h3 class="font-bold text-xl mb-2 text-[#1E1E1E]">${titleText}</h3>`; 
 
             if(posts.length === 0) {
-                feedContainer.insertAdjacentHTML('beforeend', '<p class="text-gray-500 text-sm p-4 text-center">ยังไม่มีใครตั้งกระทู้เลย มาเป็นคนแรกกันเพื่อน!</p>');
+                feedContainer.insertAdjacentHTML('beforeend', '<p class="text-gray-500 text-sm p-4 text-center bg-white rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#1E1E1E]">ยังไม่มีกระทู้ในหมวดหมู่นี้ มาเป็นคนแรกกันเพื่อน!</p>');
                 return;
             }
 
             posts.forEach(post => {
                 const timeAgo = formatTimeAgo(post.createdAt); 
 
-                // ปรับเงื่อนไขการแสดงชื่อคนโพสต์ให้สอดคล้องกับฐานข้อมูลหลังบ้าน
                 const authorDisplay = post.isAnonymous 
                     ? 'ไม่ระบุตัวตน (Anonymous)' 
                     : (post.userId ? post.userId.username : 'สมาชิกทั่วไป');
 
-                // 💬 วนลูปเตรียมข้อความคอมเมนต์ทั้งหมดที่มีใต้โพสต์นี้ (รองรับโพสต์เก่าที่ไม่มีคอมเมนต์ด้วย)
                 let commentsHTML = '';
                 if (post.comments && post.comments.length > 0) {
                     post.comments.forEach(comment => {
+                        
+                        let repliesHTML = '';
+                        if (comment.replies && comment.replies.length > 0) {
+                            comment.replies.forEach(reply => {
+                                repliesHTML += `
+                                    <div class="bg-gray-100 p-2 rounded-lg mt-1 ml-4 border border-gray-200 text-[11px]">
+                                        <div class="flex justify-between text-[9px] text-gray-400">
+                                            <span class="font-bold text-gray-500">↪️ 👤 ${reply.username || 'สมาชิกทั่วไป'}</span>
+                                            <span>${formatTimeAgo(reply.createdAt)}</span>
+                                        </div>
+                                        <p class="text-gray-600 mt-0.5">${reply.text}</p>
+                                    </div>
+                                `;
+                            });
+                        }
+
                         commentsHTML += `
                             <div class="bg-gray-50 p-2 rounded-xl mb-1.5 border border-gray-100 text-xs">
                                 <div class="flex justify-between text-[10px] text-gray-400">
@@ -165,12 +209,26 @@
                                     <span>${formatTimeAgo(comment.createdAt)}</span>
                                 </div>
                                 <p class="text-gray-700 mt-0.5">${comment.text}</p>
+
+                                <div class="replies-container mt-1">
+                                    ${repliesHTML}
+                                </div>
+
+                                <div class="flex gap-1.5 mt-2 ml-4">
+                                    <input type="text" 
+                                           id="input-reply-${comment._id}" 
+                                           placeholder="ตอบกลับคอมเมนต์นี้..." 
+                                           class="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-0.5 text-[11px] focus:outline-none focus:border-blue-400">
+                                    <button onclick="submitReply('${post._id}', '${comment._id}')" 
+                                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-2.5 py-0.5 text-[11px] transition-colors cursor-pointer">
+                                        ตอบกลับ
+                                    </button>
+                                </div>
                             </div>
                         `;
                     });
                 }
 
-                // 🎴 วาดโครงสร้างการ์ดกระทู้ใหม่แบบคลีน ๆ
                 const postHTML = `
                     <div class="bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#1E1E1E] mb-4">
                         <span class="bg-[#FFDE4D] text-[#1E1E1E] text-xs font-bold px-2.5 py-1 rounded-full">${post.category}</span>
@@ -225,7 +283,7 @@
             });
 
             if (response.ok) {
-                loadPosts(); // กดเสร็จสั่งดึงโพสต์ใหม่ทันทีเพื่ออัปเดตตัวเลขบนหน้าจอ
+                loadPosts(); 
             } else {
                 const errorData = await response.json();
                 console.error('การกดไลค์มีปัญหา:', errorData.message);
@@ -262,14 +320,54 @@
             });
 
             if (response.ok) {
-                commentInput.value = ''; // ล้างช่องพิมพ์หลังส่งสำเร็จ
-                loadPosts(); // รีโหลดฟีดกระทู้เพื่ออัปเดตคอมเมนต์ล่าสุดทันที
+                commentInput.value = ''; 
+                loadPosts(); 
             } else {
                 const errorData = await response.json();
                 alert(errorData.message || 'คอมเมนต์ไม่สำเร็จ');
             }
         } catch (error) {
             console.error('เชื่อมต่อระบบคอมเมนต์ล้มเหลว:', error);
+        }
+    }
+
+    // 🚀 ฟังก์ชันส่งคำตอบกลับย่อย (Reply) ไปยังหลังบ้าน
+    async function submitReply(postId, commentId) {
+        const inputField = document.getElementById(`input-reply-${commentId}`);
+        const replyText = inputField.value.trim();
+        const token = localStorage.getItem('token'); 
+
+        if (!replyText) {
+            alert('กรุณาพิมพ์ข้อความก่อนส่งนะเพื่อน!');
+            return;
+        }
+
+        if (!token) {
+            alert('กรุณาล็อกอินเข้าสู่ระบบก่อนตอบกลับคอมเมนต์ครับ');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/${postId}/comments/${commentId}/replies`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ text: replyText })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.message || 'ส่งคำตอบกลับไม่สำเร็จ');
+            }
+
+            inputField.value = '';
+            await loadPosts(); 
+            
+        } catch (error) {
+            console.error('เกิดข้อผิดพลาดในการตอบกลับ:', error);
+            alert(error.message);
         }
     }
 
@@ -316,7 +414,63 @@
     }
 
     // โหลดข้อมูลกระทู้ทันทีที่เปิดหน้าเว็บ
-    document.addEventListener('DOMContentLoaded', loadPosts);
-</script>
+    document.addEventListener('DOMContentLoaded', () => loadPosts('all'));
+
+    // 🔄 โหลดรายการแจ้งเตือน
+    async function loadNotifications() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch('http://localhost:5000/api/notifications', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) return;
+
+            const notifications = await response.json();
+            const badge = document.getElementById('noti-badge');
+            const list = document.getElementById('noti-list');
+
+            const unreadCount = notifications.filter(n => !n.isRead).length;
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            if (notifications.length === 0) {
+                list.innerHTML = '<p class="text-gray-400 text-center py-4">ไม่มีการแจ้งเตือน</p>';
+                return;
+            }
+
+            list.innerHTML = notifications.map(n => `
+                <div class="p-2 border-b border-gray-50 ${n.isRead ? 'opacity-60' : 'bg-blue-50/50'} rounded-lg mb-1">
+                    <p class="text-gray-800"><strong>${n.sender ? n.sender.username : 'สมาชิก'}</strong> ${n.message}</p>
+                    <span class="text-[9px] text-gray-400">${formatTimeAgo(n.createdAt)}</span>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function toggleNotiMenu() {
+        const dropdown = document.getElementById('noti-dropdown');
+        dropdown.classList.toggle('hidden');
+    }
+
+    async function markAllNotiRead() {
+        const token = localStorage.getItem('token');
+        await fetch('http://localhost:5000/api/notifications/read-all', {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        loadNotifications();
+    }
+
+    // โหลดแจ้งเตือนตอนเปิดหน้าเว็บ
+    loadNotifications();
+    </script>
 </body>
 </html>
