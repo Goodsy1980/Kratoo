@@ -119,6 +119,8 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 app.use('/api/notifications', require('./routes/notifications'));
+// นำเข้าและใช้งาน Users Route
+app.use("/api/users", require("./routes/users"));
 
 // 🏃 สั่งให้เซิร์ฟเวอร์รัน
 const PORT = process.env.PORT || 5000;
