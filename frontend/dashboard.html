@@ -8,6 +8,66 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { font-family: 'Prompt', sans-serif; }
+
+        /* ==========================================
+           Dark Mode Overrides
+           ========================================== */
+        body.dark-mode {
+            background-color: #121212 !important;
+            color: #E0E0E0 !important;
+        }
+
+        body.dark-mode nav {
+            background-color: #181818 !important;
+            border-color: #FFDE4D !important;
+        }
+
+        body.dark-mode main,
+        body.dark-mode aside,
+        body.dark-mode .bg-white {
+            background-color: #1E1E1E !important;
+            color: #FFFFFF !important;
+            border-color: #333333 !important;
+            box-shadow: 4px 4px 0px 0px #333333 !important;
+        }
+
+        body.dark-mode h3, 
+        body.dark-mode h4,
+        body.dark-mode label,
+        body.dark-mode strong {
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode p,
+        body.dark-mode span:not(.bg-[#FFDE4D]) {
+            color: #CCCCCC !important;
+        }
+
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background-color: #2A2A2A !important;
+            color: #FFFFFF !important;
+            border-color: #444444 !important;
+        }
+
+        body.dark-mode .bg-gray-100,
+        body.dark-mode .bg-gray-50 {
+            background-color: #2A2A2A !important;
+            color: #E0E0E0 !important;
+            border-color: #333333 !important;
+        }
+
+        body.dark-mode #noti-dropdown {
+            background-color: #1E1E1E !important;
+            border-color: #333333 !important;
+        }
+
+        body.dark-mode #darkModeToggle {
+            background-color: #2A2A2A !important;
+            color: #FFFFFF !important;
+            border-color: #444444 !important;
+        }
     </style>
 </head>
 <body class="bg-[#F7F7F7] text-[#1E1E1E]">
@@ -56,12 +116,12 @@
         <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
             <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">🗂️ หมวดหมู่</h3>
             <ul class="space-y-2">
-                <li><button onclick="loadPosts('all')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">🌟 ดูทั้งหมด</button></li>
-                <li><button onclick="loadPosts('⚽ กีฬาฟุตบอล')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">⚽ กีฬาฟุตบอล</button></li>
-                <li><button onclick="loadPosts('📚 วิชาการ/บทเรียน')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">📚 วิชาการ/บทเรียน</button></li>
-                <li><button onclick="loadPosts('🎨 ศิลปะ/ดนตรี')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">🎨 ศิลปะ/ดนตรี</button></li>
-                <li><button onclick="loadPosts('🎮 เกม/E-Sports')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">🎮 เกม/E-Sports</button></li>
-                <li><button onclick="loadPosts('💬 พูดคุยทั่วไป')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:font-bold transition cursor-pointer">💬 พูดคุยทั่วไป</button></li>
+                <li><button onclick="loadPosts('all')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">🌟 ดูทั้งหมด</button></li>
+                <li><button onclick="loadPosts('⚽ กีฬาฟุตบอล')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">⚽ กีฬาฟุตบอล</button></li>
+                <li><button onclick="loadPosts('📚 วิชาการ/บทเรียน')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">📚 วิชาการ/บทเรียน</button></li>
+                <li><button onclick="loadPosts('🎨 ศิลปะ/ดนตรี')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">🎨 ศิลปะ/ดนตรี</button></li>
+                <li><button onclick="loadPosts('🎮 เกม/E-Sports')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">🎮 เกม/E-Sports</button></li>
+                <li><button onclick="loadPosts('💬 พูดคุยทั่วไป')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">💬 พูดคุยทั่วไป</button></li>
             </ul>
         </aside>
 
@@ -75,14 +135,15 @@
         <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
             <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">✨ แท็กฮิต</h3>
             <div class="flex flex-wrap gap-2">
-                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#การบ้านฟิสิกส์</a>
-                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#แข่งบอลสี</a>
-                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#แนะแนวต่อมหาลัย</a>
+                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] hover:text-[#1E1E1E] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#การบ้านฟิสิกส์</a>
+                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] hover:text-[#1E1E1E] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#แข่งบอลสี</a>
+                <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] hover:text-[#1E1E1E] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#แนะแนวต่อมหาลัย</a>
             </div>
         </aside>
 
     </div>
 
+    <!-- 📝 Modal ตั้งกระทู้ -->
     <div id="postModal" class="hidden fixed inset-0 bg-[#1E1E1E]/60 flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-lg p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E]">
             <h3 class="font-bold text-xl mb-4 text-[#1E1E1E] border-b-2 border-[#FFDE4D] pb-2">✏️ ตั้งกระทู้ใหม่</h3>
@@ -111,13 +172,14 @@
                 </div>
                 
                 <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-200 rounded-xl font-bold border-2 border-[#1E1E1E] hover:bg-gray-300 cursor-pointer">ยกเลิก</button>
+                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-200 text-[#1E1E1E] rounded-xl font-bold border-2 border-[#1E1E1E] hover:bg-gray-300 cursor-pointer">ยกเลิก</button>
                     <button type="submit" class="px-4 py-2 bg-[#FFDE4D] text-[#1E1E1E] font-bold rounded-xl border-2 border-[#1E1E1E] shadow-[2px_2px_0px_0px_#1E1E1E] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#1E1E1E] cursor-pointer">ลงประกาศ</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- 👤 Modal โปรไฟล์และการตั้งค่า -->
     <div id="profileModal" class="hidden fixed inset-0 bg-[#1E1E1E]/60 flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E]">
             
@@ -130,13 +192,14 @@
                 <div class="w-24 h-24 bg-[#FFDE4D] rounded-full border-4 border-[#1E1E1E] mx-auto flex items-center justify-center text-4xl mb-3 shadow-[4px_4px_0px_0px_#1E1E1E]">
                     🧑‍🎓
                 </div>
-                <h4 class="font-bold text-2xl text-[#1E1E1E]">สมาชิก SchoolConnect</h4>
-                <p class="text-gray-500 text-sm mt-1">พร้อมลุยทุกกิจกรรม</p>
+                <h4 id="profileUsername" class="font-bold text-2xl text-[#1E1E1E]">กำลังโหลดข้อมูล...</h4>
+                <p id="profileRole" class="text-gray-500 text-sm mt-1">...</p>
             </div>
 
             <div class="space-y-3">
-                <button class="w-full py-2.5 bg-gray-100 text-[#1E1E1E] font-bold rounded-xl border-2 border-gray-300 hover:bg-gray-200 transition cursor-pointer flex justify-center items-center gap-2">
-                    🌙 เปิดโหมดกลางคืน (เร็วๆ นี้)
+                <!-- 🌙 ปุ่มสลับ Dark Mode -->
+                <button id="darkModeToggle" class="w-full py-2.5 bg-gray-100 text-[#1E1E1E] font-bold rounded-xl border-2 border-gray-300 hover:bg-gray-200 transition cursor-pointer flex justify-center items-center gap-2">
+                    🌙 เปิดโหมดกลางคืน
                 </button>
                 <button onclick="logout()" class="w-full py-2.5 bg-red-500 text-white font-bold rounded-xl border-2 border-[#1E1E1E] shadow-[2px_2px_0px_0px_#1E1E1E] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#1E1E1E] transition cursor-pointer flex justify-center items-center gap-2">
                     🚪 ออกจากระบบ
@@ -146,6 +209,32 @@
     </div>
 
     <script>
+    // ==========================================
+    // Dark Mode Controller
+    // ==========================================
+    const darkModeBtn = document.getElementById('darkModeToggle');
+
+    function initDarkMode() {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (darkModeBtn) darkModeBtn.innerHTML = '☀️ เปิดโหมดกลางวัน';
+        }
+    }
+
+    if (darkModeBtn) {
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            darkModeBtn.innerHTML = isDark ? '☀️ เปิดโหมดกลางวัน' : '🌙 เปิดโหมดกลางคืน';
+        });
+    }
+
+    initDarkMode();
+
+    // ==========================================
+    // General Functions
+    // ==========================================
     function formatTimeAgo(dateString) {
         const date = new Date(dateString);
         const now = new Date();
@@ -160,7 +249,6 @@
 
     const API_URL = 'http://localhost:5000/api/posts'; 
 
-    // การเปิด/ปิด Modal ตั้งกระทู้
     const postModal = document.getElementById('postModal');
     const openModalBtn = document.getElementById('openModalBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -169,19 +257,45 @@
     if(openModalBtn) openModalBtn.addEventListener('click', () => postModal.classList.remove('hidden'));
     if(closeModalBtn) closeModalBtn.addEventListener('click', () => postModal.classList.add('hidden'));
 
-    // 📌 การเปิด/ปิด Modal โปรไฟล์
     const profileModal = document.getElementById('profileModal');
     const openProfileBtn = document.getElementById('openProfileBtn');
     const closeProfileBtn = document.getElementById('closeProfileBtn');
 
-    if (openProfileBtn) openProfileBtn.addEventListener('click', () => profileModal.classList.remove('hidden'));
+    async function loadUserProfile() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch('http://localhost:5000/api/users/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                document.getElementById('profileUsername').textContent = userData.username || 'สมาชิกนิรนาม';
+                document.getElementById('profileRole').textContent = userData.role === 'admin' ? '👑 ผู้ดูแลระบบ' : 'นักเรียน SchoolConnect';
+            } else {
+                document.getElementById('profileUsername').textContent = 'โหลดข้อมูลไม่สำเร็จ';
+            }
+        } catch (error) {
+            console.error('โหลดข้อมูลโปรไฟล์ล้มเหลว:', error);
+            document.getElementById('profileUsername').textContent = 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้';
+        }
+    }
+
+    if (openProfileBtn) {
+        openProfileBtn.addEventListener('click', () => {
+            profileModal.classList.remove('hidden');
+            loadUserProfile(); 
+        });
+    }
+
     if (closeProfileBtn) closeProfileBtn.addEventListener('click', () => profileModal.classList.add('hidden'));
 
-    // 📌 ฟังก์ชันออกจากระบบ (Logout)
     function logout() {
         if(confirm('แน่ใจนะว่าจะออกจากระบบเพื่อน?')) {
-            localStorage.removeItem('token'); // ล้าง Token ล็อกอินทิ้ง
-            window.location.href = 'index.html'; // เด้งกลับหน้า Login (เปลี่ยนชื่อไฟล์ index.html ให้ตรงกับหน้า Login ของนายนะ)
+            localStorage.removeItem('token'); 
+            window.location.href = 'index.html'; 
         }
     }
 
