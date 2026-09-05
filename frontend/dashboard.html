@@ -10,8 +10,8 @@
         body { font-family: 'Prompt', sans-serif; }
 
         /* ==========================================
-           Dark Mode Overrides
-           ========================================== */
+            Dark Mode Overrides
+            ========================================== */
         body.dark-mode {
             background-color: #121212 !important;
             color: #E0E0E0 !important;
@@ -210,6 +210,12 @@
 
     <script>
     // ==========================================
+    // API Configuration
+    // ==========================================
+    const API_BASE_URL = 'https://schoolconnect-api.onrender.com';
+    const API_URL = `${API_BASE_URL}/api/posts`;
+
+    // ==========================================
     // Dark Mode Controller
     // ==========================================
     const darkModeBtn = document.getElementById('darkModeToggle');
@@ -247,8 +253,6 @@
         return date.toLocaleDateString("th-TH"); 
     }
 
-    const API_URL = 'http://localhost:5000/api/posts'; 
-
     const postModal = document.getElementById('postModal');
     const openModalBtn = document.getElementById('openModalBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -266,7 +270,7 @@
         if (!token) return;
 
         try {
-            const response = await fetch('http://localhost:5000/api/users/profile', {
+            const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -419,7 +423,7 @@
         const token = localStorage.getItem('token');
         if (!token) return alert('ต้องเข้าสู่ระบบก่อนถึงจะกดไลค์ได้นะเพื่อน!');
         try {
-            const response = await fetch(`http://localhost:5000/api/posts/${postId}/like`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/like`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
             if (response.ok) loadPosts(); 
         } catch (error) { console.error(error); }
     }
@@ -431,7 +435,7 @@
         const text = commentInput.value.trim();
         if (!text) return alert('กรุณาพิมพ์ข้อความคอมเมนต์ก่อนส่งนะเพื่อน!');
         try {
-            const response = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ text }) });
+            const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/comment`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ text }) });
             if (response.ok) { commentInput.value = ''; loadPosts(); } 
         } catch (error) { console.error(error); }
     }
@@ -474,7 +478,7 @@
         const token = localStorage.getItem('token');
         if (!token) return;
         try {
-            const response = await fetch('http://localhost:5000/api/notifications', { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${API_BASE_URL}/api/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) return;
             const notifications = await response.json();
             const badge = document.getElementById('noti-badge');
@@ -486,10 +490,9 @@
 
             if (notifications.length === 0) { list.innerHTML = '<p class="text-gray-400 text-center py-4">ไม่มีการแจ้งเตือน</p>'; return; }
             list.innerHTML = notifications.map(n => `
-                <div class="p-2 border-b border-gray-50 ${n.isRead ? 'opacity-60' : 'bg-blue-50/50'} rounded-lg mb-1">
-                    <p class="text-gray-800"><strong>${n.sender ? n.sender.username : 'สมาชิก'}</strong> ${n.message}</p>
-                    <span class="text-[9px] text-gray-400">${formatTimeAgo(n.createdAt)}</span>
-                </div>`).join('');
+                <p class="text-gray-800"><strong>${n.sender ? n.sender.username : 'สมาชิก'}</strong> ${n.message}</p>
+                <span class="text-[9px] text-gray-400">${formatTimeAgo(n.createdAt)}</span>
+            </div>`).join('');
         } catch (err) { console.error(err); }
     }
 
@@ -497,7 +500,7 @@
 
     async function markAllNotiRead() {
         const token = localStorage.getItem('token');
-        await fetch('http://localhost:5000/api/notifications/read-all', { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+        await fetch(`${API_BASE_URL}/api/notifications/read-all`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
         loadNotifications();
     }
 
