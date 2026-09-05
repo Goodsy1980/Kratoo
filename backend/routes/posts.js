@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const Post = require("../models/Post");
-const User = require("../models/User"); // ดึงมาไว้ข้างบนให้เป็นระเบียบ
-const Notification = require("../models/Notification"); // 🔔 เพิ่มโมเดลแจ้งเตือนตรงนี้!
+const User = require("../models/User");
+const Notification = require("../models/Notification");
 const jwt = require("jsonwebtoken");
 
 // Middleware ตรวจสอบ Token
@@ -23,7 +23,7 @@ const auth = (req, res, next) => {
   }
 };
 
-// ดึงโพสต์ (GET)
+// 📌 ดึงโพสต์ทั้งหมด (GET)
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.find()
@@ -35,14 +35,15 @@ router.get("/", async (req, res) => {
   }
 });
 
-// สร้างโพสต์ (POST)
+// 📌 สร้างโพสต์ใหม่ (POST)
 router.post("/", auth, async (req, res) => {
   try {
+    const userId = req.user.id || req.user._id;
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
       category: req.body.category,
-      userId: req.user.id,
+      userId: userId,
     });
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
@@ -57,24 +58,29 @@ router.post("/:id/like", auth, async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "ไม่พบกระทู้นี้" });
 
-    const index = post.likes.indexOf(req.user.id);
+    const currentUserId = (req.user.id || req.user._id).toString();
+
+    // ปรับใช้ findIndex เพื่อเช็ก ObjectId กับ String ได้ถูกต้อง
+    const index = post.likes.findIndex(
+      (likeId) => likeId.toString() === currentUserId
+    );
 
     if (index === -1) {
-      // ถ้ายยังไม่เคยไลค์ -> เพิ่มไลค์
-      post.likes.push(req.user.id);
+      // ยังไม่เคยไลค์ -> เพิ่มไลค์
+      post.likes.push(currentUserId);
 
-      // 🔔 แจ้งเตือน: มีคนมากดไลค์
-      if (post.userId && post.userId.toString() !== req.user.id) {
+      // 🔔 แจ้งเตือนเจ้าของกระทู้
+      if (post.userId && post.userId.toString() !== currentUserId) {
         await Notification.create({
           recipient: post.userId,
-          sender: req.user.id,
-          type: "like", // ระบุ type ให้ตรงกับ Schema
+          sender: currentUserId,
+          type: "like",
           post: post._id,
           message: `ได้ถูกใจกระทู้ของคุณ`,
         });
       }
     } else {
-      // ถ้าเคยไลค์แล้ว -> ถอนไลค์
+      // เคยไลค์แล้ว -> ถอนไลค์
       post.likes.splice(index, 1);
     }
 
@@ -91,10 +97,11 @@ router.post("/:id/comment", auth, async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "ไม่พบกระทู้นี้" });
 
-    const user = await User.findById(req.user.id);
+    const currentUserId = req.user.id || req.user._id;
+    const user = await User.findById(currentUserId);
 
     const newComment = {
-      userId: req.user.id,
+      userId: currentUserId,
       username: user ? user.username : "สมาชิกทั่วไป",
       text: req.body.text,
     };
@@ -102,11 +109,11 @@ router.post("/:id/comment", auth, async (req, res) => {
     post.comments.push(newComment);
     await post.save();
 
-    // 🔔 แจ้งเตือน: มีคนมาคอมเมนต์
-    if (post.userId && post.userId.toString() !== req.user.id) {
+    // 🔔 แจ้งเตือนเจ้าของกระทู้
+    if (post.userId && post.userId.toString() !== currentUserId.toString()) {
       await Notification.create({
         recipient: post.userId,
-        sender: req.user.id,
+        sender: currentUserId,
         type: "comment",
         post: post._id,
         message: `ได้แสดงความคิดเห็นในกระทู้ของคุณ`,
@@ -132,12 +139,12 @@ router.post("/:postId/comments/:commentId/replies", auth, async (req, res) => {
     const comment = post.comments.id(req.params.commentId);
     if (!comment) return res.status(404).json({ message: "ไม่พบคอมเมนต์นี้" });
 
-    const userId = req.user.id || req.user._id || req.user;
-    const user = await User.findById(userId);
+    const currentUserId = req.user.id || req.user._id || req.user;
+    const user = await User.findById(currentUserId);
 
     const newReply = {
       text,
-      userId: userId,
+      userId: currentUserId,
       username: user ? user.username : "สมาชิกทั่วไป",
       createdAt: new Date(),
     };
@@ -145,12 +152,11 @@ router.post("/:postId/comments/:commentId/replies", auth, async (req, res) => {
     comment.replies.push(newReply);
     await post.save();
 
-    // 🔔 แจ้งเตือน: มีคนมาตอบกลับคอมเมนต์
-    // เปลี่ยนมาแจ้งเตือน "เจ้าของคอมเมนต์" แทนที่จะเป็นเจ้าของโพสต์
-    if (comment.userId && comment.userId.toString() !== userId.toString()) {
+    // 🔔 แจ้งเตือนเจ้าของคอมเมนต์
+    if (comment.userId && comment.userId.toString() !== currentUserId.toString()) {
       await Notification.create({
         recipient: comment.userId,
-        sender: userId,
+        sender: currentUserId,
         type: "reply",
         post: post._id,
         message: `ได้ตอบกลับความคิดเห็นของคุณ`,

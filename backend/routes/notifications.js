@@ -6,13 +6,14 @@ const jwt = require('jsonwebtoken');
 // Middleware เช็ก Token
 const auth = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) return res.status(401).json({ message: 'ไม่มี Token' });
+    if (!token) return res.status(401).json({ message: 'ไม่มี Token กรุณาล็อกอินก่อน' });
+    
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY');
         req.user = decoded;
         next();
     } catch (err) {
-        res.status(401).json({ message: 'Token ไม่ถูกต้อง' });
+        res.status(401).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุ' });
     }
 };
 
@@ -26,7 +27,7 @@ router.get('/', auth, async (req, res) => {
             .limit(20);
         res.json(notifications);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลแจ้งเตือน' });
     }
 });
 
@@ -37,7 +38,7 @@ router.put('/read-all', auth, async (req, res) => {
         await Notification.updateMany({ recipient: userId, isRead: false }, { isRead: true });
         res.json({ message: 'อ่านทั้งหมดแล้ว' });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะ' });
     }
 });
 
