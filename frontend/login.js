@@ -1,5 +1,12 @@
 const loginForm = document.getElementById("login-form");
 
+// 🌐 เช็กว่าถ้ารันในเครื่องให้ใช้ localhost แต่ถ้ารันบน Vercel ให้ยิงไปหา Render
+const API_BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5000"
+    : "https://schoolconnect-api.onrender.com";
+
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault(); // ป้องกันไม่ให้หน้าเว็บรีเฟรชข้อมูลเองอัตโนมัติ
 
@@ -10,8 +17,8 @@ loginForm.addEventListener("submit", async (e) => {
   console.log("พยายามเข้าสู่ระบบด้วยชื่อ:", usernameInput);
 
   try {
-    // ยิงข้อมูลไปหา API หลังบ้านที่ Port 5000
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    // ยิงข้อมูลไปหา API หลังบ้านตามโดเมนที่สลับให้อัตโนมัติ
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,11 +33,11 @@ loginForm.addEventListener("submit", async (e) => {
 
     if (response.ok) {
       alert(data.message || "เข้าสู่ระบบสำเร็จ!");
-      
-      // เซฟ Token และชื่อผู้ใช้เก็บไว้ในบราวเซอร์
+
+      // เซฟ Token และชื่อผู้ใช้เก็บไว้ในเบราว์เซอร์
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.username);
-      
+
       // วาร์ปไปหน้าหลักกระทู้
       window.location.href = "dashboard.html";
     } else {
@@ -38,6 +45,8 @@ loginForm.addEventListener("submit", async (e) => {
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("เชื่อมต่อหลังบ้านไม่ได้! อย่าลืมเปิดรัน Node server.js ที่ Port 5000 นะครับ");
+    alert(
+      "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์หลังบ้านได้ กรุณาตรวจสอบการเชื่อมต่อ",
+    );
   }
 });
