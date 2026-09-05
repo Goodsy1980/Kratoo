@@ -21,8 +21,9 @@ const auth = (req, res, next) => {
 // 👤 API ดึงข้อมูลโปรไฟล์ของผู้ใช้ที่ล็อกอินอยู่ (GET /api/users/profile)
 router.get("/profile", auth, async (req, res) => {
   try {
+    const userId = req.user.id || req.user._id;
     // ค้นหาผู้ใช้จาก ID ใน Token (ไม่เอา password ส่งกลับไป)
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(userId).select("-password");
     if (!user) {
       return res.status(404).json({ message: "ไม่พบข้อมูลผู้ใช้นี้" });
     }
