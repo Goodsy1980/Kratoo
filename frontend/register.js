@@ -1,5 +1,12 @@
 const registerForm = document.getElementById("register-form");
 
+// 🌐 เช็กว่าถ้ารันในเครื่องให้ใช้ localhost แต่ถ้ารันบน Vercel ให้ยิงไปหา Render
+const API_BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5000"
+    : "https://schoolconnect-api.onrender.com";
+
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault(); // ป้องกันหน้าเว็บรีเฟรช
 
@@ -10,8 +17,8 @@ registerForm.addEventListener("submit", async (e) => {
   console.log("กำลังส่งข้อมูลสมัครสมาชิก:", usernameInput);
 
   try {
-    // ยิงข้อมูลไปหา API สมัครสมาชิกของหลังบ้าน (Port 5000)
-    const response = await fetch("http://localhost:5000/api/auth/register", {
+    // ยิงข้อมูลไปหา API สมัครสมาชิกตาม URL ที่กำหนดให้อัตโนมัติ
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,6 +41,8 @@ registerForm.addEventListener("submit", async (e) => {
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("เชื่อมต่อหลังบ้านไม่ได้! ตรวจดูว่ายังรัน Node server.js อยู่ไหมนะครับ");
+    alert(
+      "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์หลังบ้านได้ กรุณาตรวจสอบการเชื่อมต่อ",
+    );
   }
 });
