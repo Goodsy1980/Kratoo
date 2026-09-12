@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 📌 สร้างโพสต์ใหม่ (POST)
+// 📌 สร้างโพสต์ใหม่ (POST) - [แก้ไขเพิ่ม isAnonymous แล้ว]
 router.post("/", auth, async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
@@ -44,6 +44,7 @@ router.post("/", auth, async (req, res) => {
       content: req.body.content,
       category: req.body.category,
       userId: userId,
+      isAnonymous: req.body.isAnonymous // 🎯 จุดที่แก้ไข: เพิ่มการรับค่าซ่อนตัวตนจากหน้าบ้าน
     });
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
