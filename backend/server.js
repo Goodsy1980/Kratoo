@@ -1,3 +1,12 @@
+const dns = require('dns');
+
+// 1. บังคับให้ Node.js ใช้ IPv4 ก่อน IPv6 (แก้ปัญหา localhost/Node v18+ ค้าง)
+dns.setDefaultResultOrder('ipv4first');
+
+// 2. ตั้งค่าให้ Node.js ชี้ไปที่ Google DNS โดยตรง (แก้ปัญหา querySrv ENOTFOUND / เชื่อมต่อ MongoDB Atlas ไม่ได้)
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
+
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
