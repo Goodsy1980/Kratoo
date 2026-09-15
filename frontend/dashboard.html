@@ -72,25 +72,24 @@
 </head>
 <body class="bg-[#F7F7F7] text-[#1E1E1E]">
 
-    <nav class="bg-[#1E1E1E] text-white px-6 py-4 flex justify-between items-center border-b-4 border-[#FFDE4D] sticky top-0 z-40">
+    <!-- 🛠️ ปรับ Navbar ให้รองรับมือถือ (ใช้ flex-wrap และจัดลำดับ order) -->
+    <nav class="bg-[#1E1E1E] text-white px-4 md:px-6 py-3 md:py-4 flex flex-wrap justify-between items-center gap-3 md:gap-4 border-b-4 border-[#FFDE4D] sticky top-0 z-40">
  
+        <!-- โลโก้ -->
         <div class="flex items-center gap-2">
-            <span class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-3 py-1 rounded-lg text-lg">🏫</span>
-            <span class="font-bold text-xl tracking-wide text-[#FFDE4D]">SchoolConnect</span>
+            <span class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-2 md:px-3 py-1 rounded-lg text-base md:text-lg">🏫</span>
+            <span class="font-bold text-lg md:text-xl tracking-wide text-[#FFDE4D]">SchoolConnect</span>
         </div>
         
-        <div class="w-1/3">
-            <input type="text" id="searchInput" placeholder="🔍 ค้นหากระทู้..." class="w-full bg-[#2A2A2A] text-white px-4 py-2 rounded-xl border-2 border-transparent focus:border-[#FFDE4D] focus:outline-none transition">
-        </div>
-
-        <div class="flex items-center gap-4">
+        <!-- เมนูด้านขวา (เรียงติดกับโลโก้บนมือถือ) -->
+        <div class="flex items-center gap-2 md:gap-4 order-2 md:order-3 ml-auto">
             
             <div class="relative inline-block">
-                <button onclick="toggleNotiMenu()" class="relative p-2 text-xl hover:scale-110 transition-transform cursor-pointer">
+                <button onclick="toggleNotiMenu()" class="relative p-1.5 md:p-2 text-xl hover:scale-110 transition-transform cursor-pointer">
                     🔔 <span id="noti-badge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-black">0</span>
                 </button>
 
-                <div id="noti-dropdown" class="hidden absolute right-0 top-full mt-3 w-72 bg-white rounded-xl shadow-lg border border-gray-200 z-50 p-2 text-black">
+                <div id="noti-dropdown" class="hidden absolute right-0 top-full mt-3 w-64 md:w-72 bg-white rounded-xl shadow-lg border border-gray-200 z-50 p-2 text-black">
                     <div class="flex justify-between items-center px-2 py-1 border-b text-xs font-bold text-gray-800">
                         <span>การแจ้งเตือน</span>
                         <button onclick="markAllNotiRead()" class="text-blue-500 hover:underline text-[10px]">อ่านทั้งหมด</button>
@@ -101,19 +100,26 @@
                 </div>
             </div>
 
-            <button id="openModalBtn" class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-4 py-2 rounded-xl hover:scale-105 transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-pointer">
+            <button id="openModalBtn" class="bg-[#FFDE4D] text-[#1E1E1E] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-xl hover:scale-105 transition shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] md:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-pointer text-sm md:text-base whitespace-nowrap">
                 + ตั้งกระทู้
             </button>
 
-            <div id="openProfileBtn" class="flex items-center gap-2 bg-[#2A2A2A] px-3 py-1.5 rounded-xl border border-gray-700 hover:bg-gray-700 transition cursor-pointer">
-                <span class="text-sm text-gray-300">👦 โปรไฟล์ของฉัน</span>
+            <div id="openProfileBtn" class="flex items-center gap-1.5 md:gap-2 bg-[#2A2A2A] px-2.5 py-1.5 md:px-3 rounded-xl border border-gray-700 hover:bg-gray-700 transition cursor-pointer">
+                <span class="text-base md:text-sm text-gray-300">👦 <span class="hidden md:inline">โปรไฟล์</span></span>
             </div>
+        </div>
+
+        <!-- ช่องค้นหา (บนมือถือจะตกลงมาบรรทัดล่างเต็มจอ) -->
+        <div class="w-full md:w-1/3 order-3 md:order-2 mt-1 md:mt-0">
+            <input type="text" id="searchInput" placeholder="🔍 ค้นหากระทู้..." class="w-full bg-[#2A2A2A] text-white px-4 py-2 rounded-xl border-2 border-transparent focus:border-[#FFDE4D] focus:outline-none transition">
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto grid grid-cols-12 gap-6 p-6">
+    <!-- 🛠️ ปรับ Layout โครงสร้าง (Grid 1 คอลัมน์บนมือถือ -> 12 คอลัมน์บนจอใหญ่) -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 p-4 md:p-6">
         
-        <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
+        <!-- หมวดหมู่ (ซ้าย) -->
+        <aside class="col-span-1 md:col-span-4 lg:col-span-3 bg-white p-4 md:p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
             <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">🗂️ หมวดหมู่</h3>
             <ul class="space-y-2">
                 <li><button onclick="loadPosts('all')" class="w-full text-left block p-2 rounded-xl hover:bg-[#FFDE4D] hover:text-[#1E1E1E] hover:font-bold transition cursor-pointer">🌟 ดูทั้งหมด</button></li>
@@ -125,14 +131,16 @@
             </ul>
         </aside>
 
-        <main class="col-span-6 space-y-4">
+        <!-- รายการกระทู้ (กลาง) -->
+        <main class="col-span-1 md:col-span-8 lg:col-span-6 space-y-4">
             <h3 class="font-bold text-xl mb-2 text-[#1E1E1E]">🔥 รายการกระทู้ล่าสุด</h3>
             <div class="bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E]">
                 <p class="text-gray-500 text-sm">กำลังโหลดข้อมูลกระทู้จากระบบ...</p>
             </div>
         </main>
 
-        <aside class="col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
+        <!-- แท็กฮิต (ขวา) ซ่อนบนมือถือและแท็บเล็ต โชว์เฉพาะคอมพิวเตอร์ -->
+        <aside class="hidden lg:block lg:col-span-3 bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_0px_#1E1E1E] h-fit">
             <h3 class="font-bold text-lg mb-4 border-b-2 border-[#FFDE4D] pb-2">✨ แท็กฮิต</h3>
             <div class="flex flex-wrap gap-2">
                 <a href="#" class="bg-gray-100 hover:bg-[#FFDE4D] hover:text-[#1E1E1E] text-sm px-3 py-1.5 rounded-xl border border-[#1E1E1E] font-medium transition">#การบ้านฟิสิกส์</a>
@@ -145,7 +153,7 @@
 
     <!-- 📝 Modal ตั้งกระทู้ -->
     <div id="postModal" class="hidden fixed inset-0 bg-[#1E1E1E]/60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-lg p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E]">
+        <div class="bg-white w-full max-w-lg p-5 md:p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E] max-h-[90vh] overflow-y-auto">
             <h3 class="font-bold text-xl mb-4 text-[#1E1E1E] border-b-2 border-[#FFDE4D] pb-2">✏️ ตั้งกระทู้ใหม่</h3>
             <form id="postForm" class="space-y-4">
                 <div>
@@ -181,7 +189,7 @@
 
     <!-- 👤 Modal โปรไฟล์และการตั้งค่า -->
     <div id="profileModal" class="hidden fixed inset-0 bg-[#1E1E1E]/60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E]">
+        <div class="bg-white w-full max-w-md p-5 md:p-6 rounded-2xl border-4 border-[#1E1E1E] shadow-[8px_8px_0px_0px_#1E1E1E]">
             
             <div class="flex justify-between items-center border-b-2 border-[#FFDE4D] pb-2 mb-4">
                 <h3 class="font-bold text-xl text-[#1E1E1E]">👦 โปรไฟล์และการตั้งค่า</h3>
@@ -365,23 +373,23 @@
                                             <span class="font-bold text-gray-500">↪️ 👤 ${reply.username || 'สมาชิกทั่วไป'}</span>
                                             <span>${formatTimeAgo(reply.createdAt)}</span>
                                         </div>
-                                        <p class="text-gray-600 mt-0.5">${reply.text}</p>
+                                        <p class="text-gray-600 mt-0.5 break-words">${reply.text}</p>
                                     </div>
                                 `;
                             });
                         }
 
                         commentsHTML += `
-                            <div class="bg-gray-50 p-2 rounded-xl mb-1.5 border border-gray-100 text-xs">
+                            <div class="bg-gray-50 p-2 md:p-3 rounded-xl mb-1.5 border border-gray-100 text-xs">
                                 <div class="flex justify-between text-[10px] text-gray-400">
                                     <span class="font-bold text-gray-600">👤 ${comment.username || 'สมาชิกทั่วไป'}</span>
                                     <span>${formatTimeAgo(comment.createdAt)}</span>
                                 </div>
-                                <p class="text-gray-700 mt-0.5">${comment.text}</p>
+                                <p class="text-gray-700 mt-0.5 break-words">${comment.text}</p>
                                 <div class="replies-container mt-1">${repliesHTML}</div>
-                                <div class="flex gap-1.5 mt-2 ml-4">
-                                    <input type="text" id="input-reply-${comment._id}" placeholder="ตอบกลับคอมเมนต์นี้..." class="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-0.5 text-[11px] focus:outline-none focus:border-blue-400">
-                                    <button onclick="submitReply('${post._id}', '${comment._id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-2.5 py-0.5 text-[11px] transition-colors cursor-pointer">ตอบกลับ</button>
+                                <div class="flex flex-wrap gap-1.5 mt-2 ml-4">
+                                    <input type="text" id="input-reply-${comment._id}" placeholder="ตอบกลับคอมเมนต์นี้..." class="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-1 text-[11px] focus:outline-none focus:border-blue-400 min-w-[120px]">
+                                    <button onclick="submitReply('${post._id}', '${comment._id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-2.5 py-1 text-[11px] transition-colors cursor-pointer">ตอบกลับ</button>
                                 </div>
                             </div>
                         `;
@@ -389,12 +397,12 @@
                 }
 
                 const postHTML = `
-                    <div class="bg-white p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#1E1E1E] mb-4">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#1E1E1E] mb-4">
                         <span class="bg-[#FFDE4D] text-[#1E1E1E] text-xs font-bold px-2.5 py-1 rounded-full">${post.category}</span>
-                        <h4 class="font-bold text-lg mt-2 text-[#1E1E1E]">${post.title}</h4>
-                        <p class="text-sm text-gray-600 mt-1">${post.content || ''}</p>
+                        <h4 class="font-bold text-lg md:text-xl mt-2 text-[#1E1E1E] break-words">${post.title}</h4>
+                        <p class="text-sm text-gray-600 mt-1 break-words">${post.content || ''}</p>
                         
-                        <div class="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-500">
+                        <div class="flex flex-wrap items-center gap-3 md:gap-4 mt-4 pt-3 border-t border-gray-100 text-[11px] md:text-xs text-gray-500">
                             <div>👤 โดย: <span class="font-semibold text-gray-700">${authorDisplay}</span></div>
                             <button onclick="likePost('${post._id}')" class="flex items-center gap-1 hover:text-yellow-500 font-medium transition-colors cursor-pointer">
                                 👍 <span>${post.likes ? post.likes.length : 0} ถูกใจ</span>
@@ -404,7 +412,7 @@
                         </div>
 
                         <div class="mt-4 pt-3 border-t border-gray-200">
-                            <div class="max-h-40 overflow-y-auto mb-3">
+                            <div class="max-h-40 overflow-y-auto mb-3 pr-1">
                                 ${commentsHTML || '<p class="text-[11px] text-gray-400 text-center py-1">ยังไม่มีคอมเมนต์ มาประเดิมคนแรกกันเพื่อน!</p>'}
                             </div>
                             <div class="flex gap-2">
@@ -492,9 +500,10 @@
 
             if (notifications.length === 0) { list.innerHTML = '<p class="text-gray-400 text-center py-4">ไม่มีการแจ้งเตือน</p>'; return; }
             list.innerHTML = notifications.map(n => `
-                <p class="text-gray-800"><strong>${n.sender ? n.sender.username : 'สมาชิก'}</strong> ${n.message}</p>
-                <span class="text-[9px] text-gray-400">${formatTimeAgo(n.createdAt)}</span>
-            </div>`).join('');
+                <div class="mb-2">
+                    <p class="text-gray-800"><strong>${n.sender ? n.sender.username : 'สมาชิก'}</strong> ${n.message}</p>
+                    <span class="text-[9px] text-gray-400">${formatTimeAgo(n.createdAt)}</span>
+                </div>`).join('');
         } catch (err) { console.error(err); }
     }
 
